@@ -44,26 +44,32 @@ $listEmoji = json_decode(file_get_contents($fileListEmoji), true);
 $fakeText = getInitText();
 
 $content = $_POST['content'] ?? $fakeText;
+$maxEmojiNumber = $_POST['max-emoji-number'] ?? -1;
+$addEmojiCount = 0;
 
 $contentWithoutTags = strip_tags($content);
 $result = $content;
     //search each keyword in line.
     foreach ($emojiKeywords as $keyword => $emojiIdList) {
+        if($addEmojiCount >= $maxEmojiNumber){
+            break;
+        }
         if (strpos($contentWithoutTags, $keyword) !== false) {
             //if found keyword in line check what symbols around keyword and if it's ok try replace
             $emojiForReplace = $emojiDpPrettify[$emojiIdList[random_int(0, count($emojiIdList) - 1)]]['emoji'];
             $newResult = preg_replace('~([\s\'"]' . $keyword . '[\s\'"]+)~ium',
                                       '$1 ' . $emojiForReplace . " ",
-                                      $result);
+                                      $result, 1);
             //if replacing is failed skip
             if ($newResult === null || $newResult === $contentWithoutTags) {
                 continue;
             }
             $result = $newResult;
-            //save emoji categori
+            //save emoji category
             if (!in_array($emojiDpPrettify[$emojiIdList[0]]['category'], $foundEmojiCategories, true)) {
                 $foundEmojiCategories[] = $emojiDpPrettify[$emojiIdList[0]]['category'];
             }
+            $addEmojiCount++;
             continue;
         }
     }
@@ -74,7 +80,9 @@ $currentListMark = $listEmoji['ul'][random_int(0, count($listEmoji['ul']) - 1)];
 //replace html list items with emoji
 $result = preg_replace('~(<ul>[\n\r]*)~ium', '', $result);//"\n","\r"
 $result = preg_replace('~([\n\r]*<\/ul>)~ium', '', $result);//"\n","\r"
-$result = preg_replace('~<li>(.*?)<\/li>~ium', $currentListMark . ' $1<br>', $result);//"\n","\r"
+if($addEmojiCount < $maxEmojiNumber){
+    $result = preg_replace('~<li>(.*?)<\/li>~ium', $currentListMark . ' $1<br>', $result, $maxEmojiNumber-$addEmojiCount);//"\n","\r"
+}
 
 //replace list items(no html) with emoji
 $matches = null;
@@ -93,7 +101,8 @@ $matches = null;
     <h1>Make your text more attractive</h1>
     <p>What can it do:</p>
     <ul>
-        <li>Add leading emoji before each item</li>
+        <li>Add leading emoji before each item of list</li>
+        <li>Add emoji after words which has related emoji</li>
     </ul>
     <!--    <link rel="stylesheet" href="public/style.css">-->
     <!--    <script src="public/me.js"></script>-->
@@ -105,6 +114,7 @@ $matches = null;
                 <pre></pre>
             </div>
         </div>
+        <label for="max-emoji-number">Add not more than </label><input id="max-emoji-number" type="number" name="max-emoji-number" value="<?=$maxEmojiNumber?>">
         <button type="submit">Reformat</button>
         <textarea name="result" id="result" cols="30" rows="10"><?= $result ?></textarea>
         <div><?= $result ?></div>
