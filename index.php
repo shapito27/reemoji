@@ -45,22 +45,21 @@ $fakeText = getInitText();
 
 $content = $_POST['content'] ?? $fakeText;
 
-//explode text by line separator
-$lines = explode(PHP_EOL, $content);
-foreach ($lines as $index => $line) {
+$contentWithoutTags = strip_tags($content);
+$result = $content;
     //search each keyword in line.
     foreach ($emojiKeywords as $keyword => $emojiIdList) {
-        if (strpos($line, $keyword) !== false) {
+        if (strpos($contentWithoutTags, $keyword) !== false) {
             //if found keyword in line check what symbols around keyword and if it's ok try replace
             $emojiForReplace = $emojiDpPrettify[$emojiIdList[random_int(0, count($emojiIdList) - 1)]]['emoji'];
-            $newLine         = preg_replace('~([\s\'"]' . $keyword . '[\s\'"]+)~ium',
-                                            '$1 ' . $emojiForReplace . " ",
-                                            $line);
+            $newResult = preg_replace('~([\s\'"]' . $keyword . '[\s\'"]+)~ium',
+                                      '$1 ' . $emojiForReplace . " ",
+                                      $result);
             //if replacing is failed skip
-            if ($newLine === null || $newLine === $line) {
+            if ($newResult === null || $newResult === $contentWithoutTags) {
                 continue;
             }
-            $lines[$index] = $newLine;
+            $result = $newResult;
             //save emoji categori
             if (!in_array($emojiDpPrettify[$emojiIdList[0]]['category'], $foundEmojiCategories, true)) {
                 $foundEmojiCategories[] = $emojiDpPrettify[$emojiIdList[0]]['category'];
@@ -68,8 +67,6 @@ foreach ($lines as $index => $line) {
             continue;
         }
     }
-}
-$result = implode(PHP_EOL, $lines);
 
 //getting random list mark
 $currentListMark = $listEmoji['ul'][random_int(0, count($listEmoji['ul']) - 1)];

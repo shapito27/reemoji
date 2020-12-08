@@ -1240,15 +1240,15 @@
       "description":"SEE-NO-EVIL MONKEY≊ see-no-evil",
       "flagged":false,
       "keywords":[
-        "evil",
-        "face",
-        "forbidden",
-        "gesture",
-        "monkey",
-        "no",
-        "not",
-        "prohibited",
-        "see"
+        "not see",
+        "do not see",
+        "my god",
+        "damn",
+        "do not believe",
+        "don't believe",
+        "no see monkey",
+        "can't watch",
+        "can not watch"
       ]
     },
     {
@@ -1258,15 +1258,15 @@
       "description":"HEAR-NO-EVIL MONKEY≊ hear-no-evil",
       "flagged":false,
       "keywords":[
-        "evil",
-        "face",
-        "forbidden",
-        "gesture",
-        "hear",
-        "monkey",
-        "no",
-        "not",
-        "prohibited"
+        "not hear",
+        "do not hear",
+        "my god",
+        "damn",
+        "do not listen",
+        "don't listen",
+        "no hear monkey",
+        "can't hear",
+        "can not hear"
       ]
     },
     {
@@ -1276,15 +1276,15 @@
       "description":"SPEAK-NO-EVIL MONKEY≊ speak-no-evil",
       "flagged":false,
       "keywords":[
-        "evil",
-        "face",
-        "forbidden",
-        "gesture",
-        "monkey",
-        "no",
-        "not",
-        "prohibited",
-        "speak"
+        "not speak",
+        "do not speak",
+        "my god",
+        "damn",
+        "do not speak",
+        "don't speak",
+        "no speak monkey",
+        "can't speak",
+        "can not speak"
       ]
     },
     {
@@ -1759,6 +1759,8 @@
       "description":"FACE WITH NO GOOD GESTURE≊ gesturing no",
       "flagged":false,
       "keywords":[
+        "not allowed",
+        "not authorized",
         "forbidden",
         "gesture",
         "hand",
@@ -10051,12 +10053,14 @@
       "description":"BELL WITH CANCELLATION STROKE≊ bell with slash",
       "flagged":false,
       "keywords":[
-        "bell",
-        "forbidden",
+        "not bell",
+        "no bell",
+        "bell forbidden",
+        "bell is forbidden",
         "mute",
-        "no",
-        "not",
-        "prohibited",
+        "bell prohibited",
+        "bell is prohibited",
+        "bell is not allowed",
         "quiet",
         "silent"
       ]
@@ -12212,13 +12216,15 @@
       "description":"NO BICYCLES",
       "flagged":false,
       "keywords":[
-        "bicycle",
-        "bike",
-        "forbidden",
-        "no",
-        "not",
-        "prohibited",
-        "vehicle"
+        "no bicycle",
+        "no bike",
+        "no vehicle",
+        "bicycle prohibited",
+        "vehicle prohibited",
+        "bike prohibited",
+        "bicycle forbidden",
+        "vehicle forbidden",
+        "bike forbidden"
       ]
     },
     {
@@ -12228,11 +12234,11 @@
       "description":"NO SMOKING SYMBOL≊ no smoking",
       "flagged":false,
       "keywords":[
-        "forbidden",
-        "no",
-        "not",
-        "prohibited",
-        "smoking"
+        "no smoking",
+        "not smoking",
+        "smoking prohibited",
+        "smoking forbidden",
+        "smoking is not permitted"
       ]
     },
     {
@@ -12242,11 +12248,11 @@
       "description":"DO NOT LITTER SYMBOL≊ no littering",
       "flagged":false,
       "keywords":[
-        "forbidden",
         "litter",
-        "no",
-        "not",
-        "prohibited"
+        "littering",
+        "littering prohibited",
+        "littering forbidden",
+        "littering is not permitted"
       ]
     },
     {
@@ -12256,13 +12262,17 @@
       "description":"NON-POTABLE WATER SYMBOL≊ non-potable water",
       "flagged":false,
       "keywords":[
-        "drink",
-        "forbidden",
-        "no",
-        "not",
+        "no drink",
+        "not drink",
+        "not water",
+        "no water",
+        "drink prohibited",
+        "drink forbidden",
+        "water prohibited",
+        "water forbidden",
         "potable",
         "prohibited",
-        "water"
+        "non-potable water"
       ]
     },
     {
@@ -12272,11 +12282,11 @@
       "description":"NO PEDESTRIANS",
       "flagged":false,
       "keywords":[
-        "forbidden",
-        "no",
-        "not",
-        "pedestrian",
-        "prohibited"
+        "no pedestrian",
+        "forbidden for pedestrians",
+        "Pedestrians prohibited ",
+        "Pedestrians forbidden ",
+        "prohibited for pedestrians"
       ]
     },
     {
@@ -12286,15 +12296,18 @@
       "description":"NO MOBILE PHONES",
       "flagged":false,
       "keywords":[
-        "cell",
-        "communication",
-        "forbidden",
-        "mobile",
-        "no",
-        "not",
-        "phone",
-        "prohibited",
-        "telephone"
+        "no cell",
+        "no mobile phone",
+        "not cell",
+        "cell forbidden",
+        "no communication",
+        "no telephone",
+        "not communication",
+        "not telephone",
+        "mobile phone forbidden",
+        "telephone forbidden",
+        "mobile phone prohibited",
+        "telephone prohibited"
       ]
     },
     {
@@ -12304,13 +12317,10 @@
       "description":"NO ONE UNDER EIGHTEEN SYMBOL≊ no one under eighteen",
       "flagged":false,
       "keywords":[
-        "18",
+        "18+",
+        "+18",
         "age restriction",
         "eighteen",
-        "forbidden",
-        "no",
-        "not",
-        "prohibited",
         "underage"
       ]
     },
