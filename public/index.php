@@ -7,7 +7,7 @@
  * 3. Suggest emoji by emoji categoriy
  * 4. Add editor
  */
-$emojiDbJson = __DIR__ . '/db/emoji.json';
+$emojiDbJson = dirname(__DIR__).'/db/emoji.json';
 if (!file_exists($emojiDbJson)) {
     throw new RuntimeException(sprintf('File %s is not exist', $emojiDbJson));
 }
@@ -19,7 +19,7 @@ $foundEmojiCategories = [];
 
 foreach ($emojiDb as $emojiCategoryName => $emojiCategory) {
     foreach ($emojiCategory as $emoji) {
-        if ($emoji['active'] === false) {
+        if (isset($emoji['active']) && $emoji['active'] === false) {
             continue;
         }
         $emoji['category']             = $emojiCategoryName;
@@ -34,7 +34,7 @@ foreach ($emojiDb as $emojiCategoryName => $emojiCategory) {
     }
 }
 
-$fileListEmoji = __DIR__ . '/db/list_marks.json';
+$fileListEmoji = dirname(__DIR__).'/db/list_marks.json';
 if (!file_exists($fileListEmoji)) {
     throw new RuntimeException(sprintf('File %s is not exist', $fileListEmoji));
 }
@@ -57,10 +57,29 @@ foreach ($emojiKeywords as $keyword => $emojiIdList) {
     if (strpos($contentWithoutTags, $keyword) !== false) {
         //if found keyword in line check what symbols around keyword and if it's ok try replace
         $emojiForReplace = $emojiDpPrettify[$emojiIdList[random_int(0, count($emojiIdList) - 1)]]['emoji'];
-        $newResult       = preg_replace('~([\s\'"]' . $keyword . '[\s\'"]+)~ium',
+        $matches = null;
+//        preg_match('~([\s\'"]' . $keyword . '[\s\'"]+)~ium', $result,$matches);
+//        console_log($matches);
+        $newResult       = preg_replace('~([\h\'"]' . $keyword . '[\h\'"]+)~ium',
                                         '$1 ' . $emojiForReplace . " ",
                                         $result,
                                         1);
+
+        $newResult       = preg_replace('~[\v](' . $keyword . '[\h\'"]+)~ium',
+                                        '$1 ' . $emojiForReplace . " ",
+                                        $newResult,
+                                        1);
+
+        $newResult       = preg_replace('~([\h\'"]' . $keyword . ')[\v]+~ium',
+                                        '$1 ' . $emojiForReplace . " ",
+                                        $newResult,
+                                        1);
+
+        $newResult       = preg_replace('~[\v](' . $keyword . ')[\v]+~ium',
+                                        '$1 ' . $emojiForReplace . " ",
+                                        $newResult,
+                                        1);
+
         //if replacing is failed skip
         if ($newResult === null || $newResult === $contentWithoutTags) {
             continue;
@@ -103,12 +122,20 @@ $matches = null;
 
 ?>
     <!DOCTYPE html>
-    <html>
+    <html lang="en">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Reformat text with emoji - ReEmoji</title>
+        <link rel="canonical" href="https://text-emojify.com" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="description" content="Add emoji to text and make it more attractive and readable">
+        <meta name="keywords" content="emoji, text, content, post with emoji, content with emoji">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+        <link rel="manifest" href="/site.webmanifest">
     </head>
     <body>
     <section class="section">
@@ -159,7 +186,7 @@ $matches = null;
                             <div class="column">
                                 <h3>Result text</h3>
                                 <hr>
-                                <div><?= $result ?></div>
+                                <pre><?= $result ?></pre>
                             </div>
                         </div>
 
