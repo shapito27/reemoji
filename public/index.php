@@ -57,28 +57,110 @@ foreach ($emojiKeywords as $keyword => $emojiIdList) {
     if (strpos($contentWithoutTags, $keyword) !== false) {
         //if found keyword in line check what symbols around keyword and if it's ok try replace
         $emojiForReplace = $emojiDpPrettify[$emojiIdList[random_int(0, count($emojiIdList) - 1)]]['emoji'];
-        $matches = null;
-//        preg_match('~([\s\'"]' . $keyword . '[\s\'"]+)~ium', $result,$matches);
-//        console_log($matches);
-        $newResult       = preg_replace('~([\h\'"]' . $keyword . '[\h\'"]+)~ium',
-                                        '$1 ' . $emojiForReplace . " ",
-                                        $result,
-                                        1);
+        $newResult       = $result;
+        $matches         = null;
 
-        $newResult       = preg_replace('~[\v](' . $keyword . '[\h\'"]+)~ium',
-                                        '$1 ' . $emojiForReplace . " ",
-                                        $newResult,
-                                        1);
+        $hhPattern = '~([\h\'"]'.$keyword.'[\h\'"]+)~ium';
+        $pregRes   = preg_match($hhPattern, $newResult, $matches);
+        if ($pregRes === 1) {
+            console_log('$hhPattern');
+            console_log($matches);
+            $newResult = preg_replace($hhPattern, '$1 '.$emojiForReplace." ", $newResult, 1);
+            $addEmojiCount++;
+            if ($addEmojiCount >= $maxEmojiNumber) {
+                break;
+            }
+        } elseif ($pregRes === false) {
+            throw new RuntimeException('Error with preg_match');
+        }
 
-        $newResult       = preg_replace('~([\h\'"]' . $keyword . ')[\v]+~ium',
-                                        '$1 ' . $emojiForReplace . " ",
-                                        $newResult,
-                                        1);
+        $vhPattern = '~[\v]('.$keyword.'[\h\'"])~ium';
+        $pregRes   = preg_match($vhPattern, $newResult, $matches);
+        if ($pregRes === 1) {
+            console_log('$vhPattern');
+            console_log($matches);
+            $newResult = preg_replace($vhPattern, '$1 '.$emojiForReplace." ", $newResult, 1);
+            $addEmojiCount++;
+            if ($addEmojiCount >= $maxEmojiNumber) {
+                break;
+            }
+        } elseif ($pregRes === false) {
+            throw new RuntimeException('Error with preg_match');
+        }
 
-        $newResult       = preg_replace('~[\v](' . $keyword . ')[\v]+~ium',
-                                        '$1 ' . $emojiForReplace . " ",
-                                        $newResult,
-                                        1);
+        $hvPattern = '~([\h\'"]'.$keyword.')\v~ium';
+        $pregRes   = preg_match($hvPattern, $newResult, $matches);
+        if ($pregRes === 1) {
+            console_log('$hvPattern');
+            console_log($matches);
+            $newResult = preg_replace($hvPattern, '$1 '.$emojiForReplace." ", $newResult, 1);
+            $addEmojiCount++;
+            if ($addEmojiCount >= $maxEmojiNumber) {
+                break;
+            }
+        } elseif ($pregRes === false) {
+            throw new RuntimeException('Error with preg_match');
+        }
+
+        $vvPattern = '~\v('.$keyword.')\v~ium';
+        $pregRes   = preg_match($vvPattern, $newResult, $matches);
+        if ($pregRes === 1) {
+            console_log('$vvPattern');
+            console_log($matches);
+            $newResult = preg_replace($vvPattern, '$1 '.$emojiForReplace." ", $newResult, 1);
+            $addEmojiCount++;
+            if ($addEmojiCount >= $maxEmojiNumber) {
+                break;
+            }
+        } elseif ($pregRes === false) {
+            throw new RuntimeException('Error with preg_match');
+        }
+
+        //keyword starts from very beggining and can finish any of space
+        $startLineVhPattern = '~^('.$keyword.')[\v\h\'"]~ium';
+        $pregRes            = preg_match($startLineVhPattern, $newResult, $matches);
+        if ($pregRes === 1) {
+            console_log('$StartLineVhPattern');
+            console_log($matches);
+            $newResult = preg_replace($startLineVhPattern, '$1 '.$emojiForReplace." ", $newResult, 1);
+            $addEmojiCount++;
+            if ($addEmojiCount >= $maxEmojiNumber) {
+                break;
+            }
+        } elseif ($pregRes === false) {
+            throw new RuntimeException('Error with preg_match');
+        }
+
+
+        //keyword stay at the very end and can start any of space
+        $vhEndLinePattern = '~[\v\h\'"]('.$keyword.')$~ium';
+        $pregRes          = preg_match($vhEndLinePattern, $newResult, $matches);
+        if ($pregRes === 1) {
+            console_log('$vhEndLinePattern');
+            console_log($matches);
+            $newResult = preg_replace($vhEndLinePattern, '$0 '.$emojiForReplace." ", $newResult, 1);
+            $addEmojiCount++;
+            if ($addEmojiCount >= $maxEmojiNumber) {
+                break;
+            }
+        } elseif ($pregRes === false) {
+            throw new RuntimeException('Error with preg_match');
+        }
+
+        //only keyword
+        $onlyKeywordPattern = '~^('.$keyword.')$~ium';
+        $pregRes          = preg_match($onlyKeywordPattern, $newResult, $matches);
+        if ($pregRes === 1) {
+            console_log('$onlyKeywordPattern');
+            console_log($matches);
+            $newResult = preg_replace($onlyKeywordPattern, '$1 '.$emojiForReplace, $newResult, 1);
+            $addEmojiCount++;
+            if ($addEmojiCount >= $maxEmojiNumber) {
+                break;
+            }
+        } elseif ($pregRes === false) {
+            throw new RuntimeException('Error with preg_match');
+        }
 
         //if replacing is failed skip
         if ($newResult === null || $newResult === $contentWithoutTags) {
@@ -89,8 +171,6 @@ foreach ($emojiKeywords as $keyword => $emojiIdList) {
         if (!in_array($emojiDpPrettify[$emojiIdList[0]]['category'], $foundEmojiCategories, true)) {
             $foundEmojiCategories[] = $emojiDpPrettify[$emojiIdList[0]]['category'];
         }
-        $addEmojiCount++;
-        continue;
     }
 }
 
@@ -102,7 +182,7 @@ $result = preg_replace('~(<ul>[\n\r]*)~ium', '', $result);//"\n","\r"
 $result = preg_replace('~([\n\r]*<\/ul>)~ium', '', $result);//"\n","\r"
 if ($addEmojiCount < $maxEmojiNumber) {
     $result = preg_replace('~<li>(.*?)<\/li>~ium',
-                           $currentListMark . ' $1<br>',
+                           $currentListMark . ' $1',
                            $result,
                            $maxEmojiNumber - $addEmojiCount);//"\n","\r"
 }
@@ -180,7 +260,7 @@ $matches = null;
                                 <hr>
                                 <div class="control">
                             <textarea class="textarea" name="result" id="result" cols="30"
-                                      rows="20"><?= $result ?></textarea>
+                                      rows="15"><?= $result ?></textarea>
                                 </div>
                             </div>
                             <div class="column">
@@ -217,107 +297,14 @@ function console_log($data)
 
 function getInitText()
 {
-    return '<body class="post-template-default single single-post postid-36 single-format-standard">
+    return 'This article about my pets.
 
-<header class="site-header" role="banner">
-
-	<div class="site-branding">
-					<h1 class="site-title">
-				<a href="https://wp-themes.com/hello-elementor/" title="Home" rel="home">
-					Hello Elementor				</a>
-			</h1>
-			<p class="site-description">
-				A plain-vanilla &amp; lightweight theme for Elementor page builder			</p>
-			</div>
-
-	</header>
-
-<main class="site-main post-36 post type-post status-publish format-standard hentry category-uncategorized" role="main">
-			<header class="page-header">
-			<h1 class="entry-title">Elements</h1>		</header>
-		<div class="page-content">
-		<p><!-- Sample Content to Plugin to Template --></p>
-<p>The purpose of this HTML is to help determine what default settings are with CSS and to make sure that all possible HTML Elements are included in this HTML so as to not miss any possible Elements when designing a site.</p>
-<hr>
-<h1>Heading 1</h1>
-<h2>Heading 2</h2>
-<h3>Heading 3</h3>
-<h4>Heading 4</h4>
-<h5>Heading 5</h5>
-<h6>Heading 6</h6>
-<p><small><a href="#wrapper">[top]</a></small></p>
-<hr>
-<h2 id="paragraph">Paragraph</h2>
-<p> Morbi imperdiet augue quis tellus.</p>
-<p>Lorem ipsum dolor sit amet, <em>emphasis</em> consectetuer adipiscing elit. Nullam dignissim convallis est. Quisque aliquam. Donec faucibus. Nunc iaculis suscipit dui. Nam sit amet sem. Aliquam libero nisi, imperdiet at, tincidunt nec, gravida vehicula, nisl. Praesent mattis, massa quis luctus fermentum, turpis mi volutpat justo, eu volutpat enim diam eget metus. Maecenas ornare tortor. Donec sed tellus eget sapien fringilla nonummy. Mauris a ante. Suspendisse quam sem, consequat at, commodo vitae, feugiat in, nunc. Morbi imperdiet augue quis tellus.</p>
-<p><small><a href="#wrapper">[top]</a></small></p>
-<hr>
-<h2 id="list_types">List Types</h2>
-<h3>Definition List</h3>
-<dl>
-<dt>Definition List Title</dt>
-<dd>This is a definition list division.</dd>
-</dl>
-<h3>Ordered List</h3>
-<ol>
-<li>List Item 1</li>
-<li>List Item 2</li>
-<li>List Item 3</li>
-</ol>
-<h3>Unordered List</h3>
+People ask me how many pets i have?
 <ul>
-<li>List Item 1</li>
-<li>List Item 2</li>
-<li>List Item 3</li>
+<li>3 cats</li>
+<li>2 dogs</li>
+<li>1 fish</li>
 </ul>
-<p><small><a href="#wrapper">[top]</a></small></p>
-<hr>
-<h2 id="form_elements">Forms</h2>
-<fieldset>
-<legend>Legend</legend>
-<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nullam dignissim convallis est. Quisque aliquam. Donec faucibus. Nunc iaculis suscipit dui. Nam sit amet sem. Aliquam libero nisi, imperdiet at, tincidunt nec, gravida vehicula, nisl. Praesent mattis, massa quis luctus fermentum, turpis mi volutpat justo, eu volutpat enim diam eget metus.</p>
-<hr>
-<h2 id="tables">Tables</h2>
-<table cellspacing="0" cellpadding="0">
-<tbody><tr>
-<th>Table Header 1</th>
-<th>Table Header 2</th>
-<th>Table Header 3</th>
-</tr>
-</tbody></table>
-<p><small><a href="#wrapper">[top]</a></small></p>
-<hr>
-<h2 id="misc">Misc Stuff – abbr, acronym, pre, code, sub, sup, etc.</h2>
-<p>Lorem <sup>superscript</sup> dolor <sub>subscript</sub> amet, consectetuer adipiscing elit. Nullam dignissim convallis est. Quisque aliquam. <cite>cite</cite>. Nunc iaculis suscipit dui. Nam sit amet sem. Aliquam libero nisi, imperdiet at, tincidunt nec, gravida vehicula, nisl. Praesent mattis, massa quis luctus fermentum, turpis mi volutpat justo, eu volutpat enim diam eget metus. Maecenas ornare tortor. Donec sed tellus eget sapien fringilla nonummy. <acronym title="National Basketball Association">NBA</acronym> Mauris a ante. Suspendisse quam sem, consequat at, commodo vitae, feugiat in, nunc. Morbi imperdiet augue quis tellus.  <abbr title="Avenue">AVE</abbr></p>
-<pre><p>
-<acronym title="National Basketball Association">NBA</acronym> 
-Mauris a ante. Suspendisse
- quam sem, consequat at, 
-commodo vitae, feugiat in, 
-nunc. Morbi imperdiet augue
- quis tellus.  
-<abbr title="Avenue">AVE</abbr></p></pre>
-<blockquote><p>
-	“This stylesheet is going to help so freaking much.” <br>-Blockquote
-</p></blockquote>
-<p><small><a href="#wrapper">[top]</a></small><br>
-<!-- End of Sample Content --></p>
-		<div class="post-tags">
-					</div>
-			</div>
 
-	<section id="comments" class="comments-area">
-
-	
-
-
-</section><!-- .comments-area -->
-</main>
-
-	<footer id="site-footer" class="site-footer" role="contentinfo">
-	</footer>
-
-
-
-</body>';
+My biggest cat is  5 kg';
 }
