@@ -1,4 +1,8 @@
 <?php
+const REPLACE_TYPE_BEFORE ='before';
+const REPLACE_TYPE_AFTER ='after';
+const REPLACE_TYPE_INSTEAD ='instead';
+const REPLACE_TYPE_RANDOMLY ='randomly';
 
 /**
  * @todo
@@ -57,10 +61,10 @@ foreach ($emojiKeywords as $keyword => $emojiIdList) {
     if (strpos($contentWithoutTags, $keyword) !== false) {
         //if found keyword in line check what symbols around keyword and if it's ok try replace
         $emojiForReplace = $emojiDpPrettify[$emojiIdList[random_int(0, count($emojiIdList) - 1)]]['emoji'];
-        $newResult       = preg_replace('~([\s\'"]' . $keyword . '[\s\'"]+)~ium',
-                                        '$1 ' . $emojiForReplace . " ",
-                                        $result,
-                                        1);
+        $newResult = preg_replace('~([\s\'"]' . $keyword . '[\s\'"]+)~ium',
+            getReplaceTypeTemplate($_POST['replace-type'], $emojiForReplace),
+            $result,
+            1);
         //if replacing is failed skip
         if ($newResult === null || $newResult === $contentWithoutTags) {
             continue;
@@ -83,9 +87,9 @@ $result = preg_replace('~(<ul>[\n\r]*)~ium', '', $result);//"\n","\r"
 $result = preg_replace('~([\n\r]*<\/ul>)~ium', '', $result);//"\n","\r"
 if ($addEmojiCount < $maxEmojiNumber) {
     $result = preg_replace('~<li>(.*?)<\/li>~ium',
-                           $currentListMark . ' $1<br>',
-                           $result,
-                           $maxEmojiNumber - $addEmojiCount);//"\n","\r"
+        $currentListMark . ' $1<br>',
+        $result,
+        $maxEmojiNumber - $addEmojiCount);//"\n","\r"
 }
 
 //replace list items(no html) with emoji
@@ -101,6 +105,29 @@ $matches = null;
 
 //console_log($result);
 
+/**
+ * @param string $replaceType
+ * @param string $emojiForReplace
+ *
+ * @return string
+ * @throws Exception
+ */
+function getReplaceTypeTemplate(string $replaceType, string $emojiForReplace):string
+{
+    $possibleTypes = [REPLACE_TYPE_BEFORE, REPLACE_TYPE_INSTEAD, REPLACE_TYPE_AFTER];
+    if($replaceType === REPLACE_TYPE_RANDOMLY){
+        $replaceType = $possibleTypes[random_int(0, count($possibleTypes) - 1)];
+    }
+    switch ($replaceType){
+        case REPLACE_TYPE_BEFORE:
+            return ' ' . $emojiForReplace . '$1 ';
+        case REPLACE_TYPE_INSTEAD:
+            return ' ' . $emojiForReplace . ' ';
+        case REPLACE_TYPE_AFTER:
+        default:
+            return '$1 ' . $emojiForReplace . ' ';
+    }
+}
 ?>
     <!DOCTYPE html>
     <html>
@@ -139,6 +166,29 @@ $matches = null;
                             <input class="input" id="max-emoji-number" type="number" name="max-emoji-number"
                                    value="<?= $maxEmojiNumber ?>">
                             <p class="help">If you want limit amount of emoji</p>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>How to place emoji</label>
+                        <div class="control">
+                            <label for="replace-type-before" class="radio">
+                                <input class="radio" id="replace-type-before" type="radio" name="replace-type" value="before" <?=$_POST['replace-type']===REPLACE_TYPE_BEFORE?'checked':''?>>
+                                before keyword </label>
+
+                            <label for="replace-type-after">
+                                <input class="radio" id="replace-type-after" type="radio" name="replace-type" value="after" <?=$_POST['replace-type']===REPLACE_TYPE_AFTER?'checked':''?>>
+                                 after keyword </label>
+
+                            <label for="replace-type-instead">
+                                <input class="radio" id="replace-type-instead" type="radio" name="replace-type" value="instead" <?=$_POST['replace-type']===REPLACE_TYPE_INSTEAD?'checked':''?>>
+                                 instead keyword </label>
+
+                            <label for="replace-type-randomly">
+                                <input class="radio" id="replace-type-randomly" type="radio" name="replace-type" value="randomly" <?=$_POST['replace-type']===REPLACE_TYPE_RANDOMLY?'checked':''?>>
+                                 randomly </label>
+
+<!--                            <p class="help">If you want limit amount of emoji</p>-->
                         </div>
                     </div>
                     <div class="field">
