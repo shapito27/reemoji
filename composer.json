@@ -1,0 +1,13 @@
+{
+    "name": "remoji",
+    "type": "library",
+    "description": "remoji",
+    "require": {
+        "symfony/translation": "^5.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Emojify\\": "classes/"
+        }
+    }
+}
