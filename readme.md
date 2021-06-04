@@ -1,9 +1,9 @@
-#Tool to make your text more attractive
+# Tool to make your text more attractive
 
 - Add leading emoji before each item of list
 - Add emoji after words which has related emoji 💡
 
-Set options, add your text and press Reformat. 
+Just add your text and press Reformat. 
 
 ![](https://text-emojify.com/text-emojify-interface.png)
 
