@@ -1,18 +1,30 @@
 <?php
 namespace Emojify;
 
+use Exception;
 use RuntimeException;
 
 class Helper
 {
-    public static function consoleLog($data)
+    public const REPLACE_TYPE_BEFORE = 'before';
+    public const REPLACE_TYPE_AFTER = 'after';
+    public const REPLACE_TYPE_INSTEAD = 'instead';
+    public const REPLACE_TYPE_RANDOMLY = 'randomly';
+
+    /**
+     * @param $data
+     */
+    public static function consoleLog($data): void
     {
         echo '<script>';
         echo 'console.log(' . json_encode($data) . ')';
         echo '</script>';
     }
 
-    public static function getInitText():string
+    /**
+     * @return string
+     */
+    public static function getInitText(): string
     {
         return 'This article about my pets.
 
@@ -26,15 +38,15 @@ People ask me how many pets i have?
 My biggest cat is  5 kg';
     }
 
-    public static function emojifyText(string $content)
+    /**
+     * @param  string  $content
+     * @param  string  $replaceType
+     *
+     * @return array
+     * @throws Exception
+     */
+    public static function emojifyText(string $content, string $replaceType): array
     {
-        /**
-         * @todo
-         * 1. Maybe I should remove all html tags first. And then search all keywords. To avoid problems with <>/
-         * 2. If we have several list make them different
-         * 3. Suggest emoji by emoji categoriy
-         * 4. Add editor
-         */
         $emojiDbJson = dirname(__DIR__).'/db/emoji.json';
         if (!file_exists($emojiDbJson)) {
             throw new RuntimeException(sprintf('File %s is not exist', $emojiDbJson));
@@ -74,7 +86,8 @@ My biggest cat is  5 kg';
 
         $contentWithoutTags = strip_tags($content);
         $result             = $content;
-//search each keyword in line.
+
+        //search each keyword in line.
         foreach ($emojiKeywords as $keyword => $emojiIdList) {
             if ($addEmojiCount >= $maxEmojiNumber) {
                 break;
@@ -90,7 +103,12 @@ My biggest cat is  5 kg';
                 if ($pregRes === 1) {
                     self::consoleLog('$hhPattern');
                     self::consoleLog($matches);
-                    $newResult = preg_replace($hhPattern, '$1 '.$emojiForReplace." ", $newResult, 1);
+                    $newResult = preg_replace(
+                        $hhPattern,
+                        self::getReplaceTypeTemplate($replaceType, $emojiForReplace),
+                        $newResult,
+                        1
+                    );
                     $addEmojiCount++;
                     if ($addEmojiCount >= $maxEmojiNumber) {
                         break;
@@ -199,10 +217,10 @@ My biggest cat is  5 kg';
             }
         }
 
-//getting random list mark
+        //getting random list mark
         $currentListMark = $listEmoji['ul'][random_int(0, count($listEmoji['ul']) - 1)];
 
-//replace html list items with emoji
+        //replace html list items with emoji
         $result = preg_replace('~(<ul>[\n\r]*)~ium', '', $result);//"\n","\r"
         $result = preg_replace('~([\n\r]*<\/ul>)~ium', '', $result);//"\n","\r"
         if ($addEmojiCount < $maxEmojiNumber) {
@@ -212,7 +230,7 @@ My biggest cat is  5 kg';
                                    $maxEmojiNumber - $addEmojiCount);//"\n","\r"
         }
 
-//replace list items(no html) with emoji
+        //replace list items(no html) with emoji
         $matches = null;
 //var_dump(preg_match_all('~\r\n[a-zA-Zа-яА-Я]+~ium', $result, $matches));
 //var_dump($matches);
@@ -228,11 +246,39 @@ My biggest cat is  5 kg';
         ];
     }
 
-    public static function hrefLangList()
+    /**
+     * @return string[]
+     */
+    public static function hrefLangList(): array
     {
         return [
             'en' => 'https://www.text-emojify.com/en/',
             'ru' => 'https://www.text-emojify.com/ru/',
         ];
+    }
+
+    /**
+     * @param string $replaceType
+     * @param string $emojiForReplace
+     *
+     * @return string
+     * @throws Exception
+     */
+    private static function getReplaceTypeTemplate(string $replaceType, string $emojiForReplace): string
+    {
+        $possibleTypes = [self::REPLACE_TYPE_BEFORE, self::REPLACE_TYPE_INSTEAD, self::REPLACE_TYPE_AFTER];
+        if ($replaceType === self::REPLACE_TYPE_RANDOMLY) {
+            $replaceType = $possibleTypes[random_int(0, count($possibleTypes) - 1)];
+        }
+
+        switch ($replaceType){
+            case self::REPLACE_TYPE_BEFORE:
+                return ' ' . $emojiForReplace . '$1 ';
+            case self::REPLACE_TYPE_INSTEAD:
+                return ' ' . $emojiForReplace . ' ';
+            case self::REPLACE_TYPE_AFTER:
+            default:
+                return '$1 ' . $emojiForReplace . ' ';
+        }
     }
 }

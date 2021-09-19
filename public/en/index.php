@@ -7,7 +7,8 @@ use Symfony\Component\Translation\Translator;
 
 $fakeText = Helper::getInitText();
 $content = $_POST['content'] ?? $fakeText;
-list($result, $foundEmojiCategories, $maxEmojiNumber) = Helper::emojifyText($content);
+$replaceType = $_POST['replace-type'] ?? Helper::REPLACE_TYPE_AFTER;
+list($result, $foundEmojiCategories, $maxEmojiNumber) = Helper::emojifyText($content, $replaceType);
 
 $htmlLang = 'en-US';
 $locale = 'en_US';

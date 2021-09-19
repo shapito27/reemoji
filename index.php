@@ -1,16 +1,5 @@
 <?php
-const REPLACE_TYPE_BEFORE ='before';
-const REPLACE_TYPE_AFTER ='after';
-const REPLACE_TYPE_INSTEAD ='instead';
-const REPLACE_TYPE_RANDOMLY ='randomly';
 
-/**
- * @todo
- * 1. Maybe I should remove all html tags first. And then search all keywords. To avoid problems with <>/
- * 2. If we have several list make them different
- * 3. Suggest emoji by emoji categoriy
- * 4. Add editor
- */
 $emojiDbJson = __DIR__ . '/db/emoji.json';
 if (!file_exists($emojiDbJson)) {
     throw new RuntimeException(sprintf('File %s is not exist', $emojiDbJson));
